@@ -142,14 +142,6 @@
 <TabbedPanelContent>
     rows: 1
     padding: 3
-    canvas:
-        Color:
-            rgba: self.parent.background_color if self.parent else (1, 1, 1, 1)
-        BorderImage:
-            border: self.parent.border if self.parent else (16, 16, 16, 16)
-            source: (root.parent.background_disabled_image if self.disabled else root.parent.background_image) if root.parent else None
-            size: self.size
-            pos: self.pos
 
 <TabbedPanelStrip>
     rows: 1
@@ -440,11 +432,6 @@
             Clear
         canvas:
             Clear
-            Color:
-                rgba: 1,1,1,1
-            Rectangle:
-                size: root.index*root.width/float(root.total), 2
-                pos: 0, self.top-2
         size_hint: 0.2, 0.03
         pos_hint: {'x':0.01, 'top':1}
         on_press: root.cancel()

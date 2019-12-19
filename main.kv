@@ -16,12 +16,6 @@ FloatLayout:
         size_hint_y: None
 
 <StatusBar@BoxLayout>:
-    canvas:
-        Color:
-            rgba: p.red if 'error' in app.state else p.accent
-        Rectangle:
-            size: self.size
-            pos: self.pos
     orientation: 'horizontal'
     StackLayout:
         id: left
@@ -31,6 +25,7 @@ FloatLayout:
         Label:
             id: state
             text: "state: " + app.state
+            color: p.status_color
             size_hint_x: None
             size: self.texture_size
             font_size: root.height - 5
@@ -46,6 +41,7 @@ FloatLayout:
             size: 0, root.height
             topright: root.right, root.top
         TimeLabel:
+            color: p.status_color
             id: time
             text: self.time
             size_hint_x: None
@@ -69,17 +65,41 @@ FloatLayout:
 
 <HomeTab@TabbedPanelItem>:
     background_down: '' # dadurch nimmt es background color an, sowieso immer mit dessen opacity auch waere es ein bild
-    background_normal: p.kgui_dir+'/Logos/Black.png'
-    background_color: p.background
+    background_normal: ''
+    background_color: (0,0,0,0)
     canvas:
+        Color:
+            rgba: p.background if self.state == 'down' else (0,0,0,0)
+        RoundedRectangle:
+            radius: (0, 0, p.popup_radius, p.popup_radius)
+            size: p.screen_width/3, p.tab_height
+            pos: 0,0
+        Rectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width/3, p.tab_height/2
+        Color:
+            rgba: (0,0,0,1) if self.state == 'down' else (0,0,0,0)
+        RoundedRectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width/3, p.tab_height/2
+            radius: (p.popup_radius, 0, 0, 0)
+        Color:
+            rgba: (1,1,1,1) if self.state == 'down' else p.status_color
         Rectangle:
             source: p.kgui_dir+'/Logos/HomeIcon.png'
             size: 100, 100
             pos: 50, 0
     FloatLayout:
-        Background:
+        Widget:
             pos_hint: {'x':0,'y':0}
             size_hint: 1,1
+            canvas:
+                Color:
+                    rgba: p.background
+                RoundedRectangle:
+                    radius: (p.popup_radius, p.popup_radius, p.popup_radius, 0)
+                    size: self.size
+                    pos: self.pos
         ProgressBar:
             enabled: True if app.state == 'printing' or app.state == 'paused' or app.state == 'pausing' else False
             id: progress_bar
@@ -1038,8 +1058,36 @@ FloatLayout:
 <FileTab@TabbedPanelItem>:
     background_down: ''
     background_normal: p.kgui_dir+'/Logos/Black.png'
-    background_color: p.background
+    background_color: (0,0,0,0)
     canvas:
+        Color:
+            rgba: p.background if self.state == 'down' else (0,0,0,0)
+        RoundedRectangle:
+            radius: (0, 0, p.popup_radius, p.popup_radius)
+            size: p.screen_width/3, p.tab_height
+            pos: p.screen_width/3, 0
+        Rectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width/3 - p.tab_height/2, p.tab_height/2
+        Rectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width*2/3, p.tab_height/2
+        Color:
+            rgba: (0,0,0,1) if self.state == 'down' else (0,0,0,0)
+        RoundedRectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width/3 - p.tab_height/2, p.tab_height/2
+            radius: (0, p.popup_radius, 0, 0)
+        RoundedRectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width*2/3, p.tab_height/2
+            radius: (p.popup_radius, 0, 0, 0)
+        RoundedRectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width/3, p.tab_height/2
+            radius: (p.popup_radius, 0, 0, 0)
+        Color:
+            rgba: (1,1,1,1) if self.state == 'down' else p.status_color
         Rectangle:
             source: p.kgui_dir+'/Logos/FilesIcon.png'
             size: 100,100
@@ -1049,7 +1097,8 @@ FloatLayout:
         canvas.before:         
             Color:
                 rgba: p.background
-            Rectangle:
+            RoundedRectangle:
+                radius: (p.popup_radius,)
                 size: self.size
 
 <PrintPopup>:
@@ -1122,8 +1171,25 @@ FloatLayout:
 <SettingTab@TabbedPanelItem>:
     background_down: '' 
     background_normal: p.kgui_dir+'/Logos/Black.png'
-    background_color: p.background
+    background_color: (0,0,0,0)
     canvas:
+        Color:
+            rgba: p.background if self.state == 'down' else (0,0,0,0)
+        RoundedRectangle:
+            radius: (0, 0, p.popup_radius, p.popup_radius)
+            size: p.screen_width/3, p.tab_height
+            pos: p.screen_width*2/3,0
+        Rectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width*2/3 - p.tab_height/2, p.tab_height/2
+        Color:
+            rgba: (0,0,0,1) if self.state == 'down' else (0,0,0,0)
+        RoundedRectangle:
+            size: p.tab_height/2, p.tab_height/2
+            pos: p.screen_width*2/3 - p.tab_height/2, p.tab_height/2
+            radius: (0, p.popup_radius, 0, 0)
+        Color:
+            rgba: (1,1,1,1) if self.state == 'down' else p.status_color
         Rectangle:
             source: p.kgui_dir+'/Logos/SettingsIcon.png'
             size: 100, 100
@@ -1141,16 +1207,11 @@ FloatLayout:
         canvas.before:
             Color:
                 rgba: p.background
-            Rectangle:
+            RoundedRectangle:
+                radius: (p.popup_radius, p.popup_radius, 0, p.popup_radius)
                 pos: self.pos
                 size: self.size
         BoxLayout:
-            canvas:
-                Color:
-                    rgba: p.background #set Background colour for settings
-                Rectangle:
-                    size: self.size
-                    pos: self.pos
             orientation:'vertical'
             height: self.minimum_height
             pos: 0, root.height - self.height
@@ -1181,7 +1242,8 @@ FloatLayout:
         canvas.before:
             Color:
                 rgba: p.background
-            Rectangle:
+            RoundedRectangle:
+                radius: (p.popup_radius, p.popup_radius, 0, p.popup_radius)
                 pos: self.pos
                 size: self.size
         RectangleButton:
@@ -1414,7 +1476,8 @@ FloatLayout:
     canvas.before:
         Color:
             rgba: p.background
-        Rectangle:
+        RoundedRectangle:
+            radius: (p.popup_radius,)
             pos: self.pos
             size: self.size
 
