@@ -67,7 +67,7 @@ FloatLayout:
     background_down: '' # dadurch nimmt es background color an, sowieso immer mit dessen opacity auch waere es ein bild
     background_normal: ''
     background_color: (0,0,0,0)
-    canvas:
+    canvas.before:
         Color:
             rgba: p.background if self.state == 'down' else (0,0,0,0)
         RoundedRectangle:
@@ -1081,10 +1081,6 @@ FloatLayout:
         RoundedRectangle:
             size: p.tab_height/2, p.tab_height/2
             pos: p.screen_width*2/3, p.tab_height/2
-            radius: (p.popup_radius, 0, 0, 0)
-        RoundedRectangle:
-            size: p.tab_height/2, p.tab_height/2
-            pos: p.screen_width/3, p.tab_height/2
             radius: (p.popup_radius, 0, 0, 0)
         Color:
             rgba: (1,1,1,1) if self.state == 'down' else p.status_color
