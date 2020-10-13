@@ -124,7 +124,6 @@ class mainApp(App, threading.Thread): #Handles Communication with Klipper
             self.register_ui_event_handler("klippy:ready", self.handle_ready) # connect handlers have run
             self.register_ui_event_handler("klippy:disconnect", self.handle_disconnect)
             self.register_ui_event_handler("klippy:shutdown", self.handle_shutdown)
-            self.register_ui_event_handler("klippy:critical_error", self.handle_critical_error)
             self.register_ui_event_handler("klippy:error", self.handle_error)
             self.register_ui_event_handler("homing:home_rails_start", self.handle_home_start)
             self.register_ui_event_handler("homing:home_rails_end", self.handle_home_end)
@@ -182,18 +181,18 @@ class mainApp(App, threading.Thread): #Handles Communication with Klipper
     def handle_ready(self):
         self.state = "ready"
 
+
+    def handle_disconnect(self):
+        pass
+        # self.stop()
+        # self._Thread_stop()
+
     # is called when system shuts down all work, either
     # to halt so the user can see what he did wrong
     # or to fully exit afterwards
-    def handle_shutdown(self):
-        self.stop()
-
-    def handle_disconnect(self):
-        self.stop()
-
-    def handle_critical_error(self, message):
+    def handle_shutdown(self, title, message):
         self.state = "error"
-        CriticalErrorPopup(message = message).open()
+        CriticalErrorPopup(title = title, message = message).open()
 
     def handle_error(self, message):
         ErrorPopup(message = message).open()
@@ -576,10 +575,10 @@ class mainApp(App, threading.Thread): #Handles Communication with Klipper
         Popen(['sudo','systemctl', 'reboot']) 
     def restart_klipper(self):
         """Quit and restart klipper and GUI"""
-        Popen(['sudo','systemctl', 'restart', 'klipper.service'])
+        self.printer.request_exit("firmware_restart")
     def quit(self):
         """Stop klipper and GUI, returns to tty"""
-        Popen(['sudo','systemctl', 'stop', 'klipper.service'])
+        self.printer.request_exit("exit")
 
     # using lambdaception to register klippy event handlers to run in the UI thread
     def register_ui_event_handler(self, event_name, event_handler):
@@ -587,12 +586,11 @@ class mainApp(App, threading.Thread): #Handles Communication with Klipper
 
 # Catch KGUI exceptions and display popups
 class PopupExceptionHandler(ExceptionHandler):
-    def handle_exception(self, exception):
+    def handle_exception(self, e):
         if not TESTING:
-            logging.info("UI-Exception, popup invoked")
-            tr = ''.join(traceback.format_tb(exception.__traceback__))
-            App.get_running_app().handle_critical_error(tr + "\n\n" + repr(exception))
-            logging.exception(exception)
+            tr = ''.join(traceback.format_tb(e.__traceback__))
+            App.get_running_app().handle_shutdown(repr(e), tr)
+            logging.exception("UI-Exception, popup invoked")
             return ExceptionManager.PASS
 
 ########################################################################################
