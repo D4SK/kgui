@@ -575,10 +575,10 @@ class mainApp(App, threading.Thread): #Handles Communication with Klipper
         Popen(['sudo','systemctl', 'reboot']) 
     def restart_klipper(self):
         """Quit and restart klipper and GUI"""
-        self.printer.request_exit("firmware_restart")
+        self.reactor.register_async_callback(lambda e: self.printer.request_exit("firmware_restart"))
     def quit(self):
         """Stop klipper and GUI, returns to tty"""
-        self.printer.request_exit("exit")
+        self.reactor.register_async_callback(lambda e: self.printer.request_exit("exit"))
 
     # using lambdaception to register klippy event handlers to run in the UI thread
     def register_ui_event_handler(self, event_name, event_handler):
