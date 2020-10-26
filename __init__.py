@@ -22,6 +22,9 @@ from kivy.config import Config
 from kivy.lang import Builder
 from kivy.properties import (OptionProperty, BooleanProperty, DictProperty,
         NumericProperty, ListProperty, StringProperty)
+# import kivy.core.window as window
+from kivy.base import EventLoop
+from kivy.cache import Cache
 
 from .elements import UltraKeyboard, CriticalErrorPopup, ErrorPopup
 from .freedir import freedir
@@ -260,6 +263,12 @@ class mainApp(App, threading.Thread): #Handles Communication with Klipper
     def on_stop(self, *args):
         # Stop networking dbus event loop
         self.network_manager.loop.quit()
+        logging.info("stop_handler")
+        if not EventLoop.event_listeners:
+            logging.info("did kivy cache delete")
+            #window.Window = window.core_select_lib('window', window.window_impl, True)
+            for cat in Cache._categories:
+                Cache._objects[cat] = {}
 
     def bind_updating(self, *args):
         self.root.ids.tabs.bind(current_tab=self.control_updating)
